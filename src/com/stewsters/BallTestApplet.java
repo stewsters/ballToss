@@ -4,6 +4,8 @@ import com.bulletphysics.linearmath.Transform;
 import peasy.PeasyCam;
 import processing.core.PApplet;
 
+import javax.vecmath.Vector3f;
+
 public class BallTestApplet extends PApplet {
 
     PhysicsWorld physicsWorld;
@@ -13,10 +15,8 @@ public class BallTestApplet extends PApplet {
         size(800, 600, P3D);
         cam = new PeasyCam(this, 180);
         physicsWorld = new PhysicsWorld();
-//        cam.rotateY(PI / 5);
-//        cam.rotateX(PI / 5);
 
-
+        noStroke();
     }
 
 
@@ -25,33 +25,39 @@ public class BallTestApplet extends PApplet {
         setupLights();
         physicsWorld.myWorld.stepSimulation((1.0f / 60.0f));
 
-        for (Ball fallRigidBody : physicsWorld.balls) {
-//            if (hover)
-//                fallRigidBody.stabilize();
-
-            Transform myTransform = new Transform();
-            myTransform = fallRigidBody.rigidBody.getMotionState().getWorldTransform(myTransform);
-
-            pushMatrix();
-
-            translate(myTransform.origin.x, myTransform.origin.y, myTransform.origin.z);
-
-            applyMatrix(myTransform.basis.m00, myTransform.basis.m01, myTransform.basis.m02, 0,
-                    myTransform.basis.m10, myTransform.basis.m11, myTransform.basis.m12, 0,
-                    myTransform.basis.m20, myTransform.basis.m21, myTransform.basis.m22, 0,
-                    0, 0, 0, 1);
-
-            fallRigidBody.render(this);
-
-            popMatrix();
+        fill(200,100,100);
+        for (Ball ball : physicsWorld.balls) {
+            render(ball);
+        }
+        for (Box box : physicsWorld.boxes) {
+            render(box);
         }
 
         pushMatrix();
 
         rectMode(CENTER);
-//        noStroke();
+
         fill(255);
         rect(0, 0, 150, 150);
+        popMatrix();
+    }
+
+    public void render(PhysicsRenderable renderable){
+
+        Transform myTransform = new Transform();
+        myTransform = renderable.getRigidBody().getMotionState().getWorldTransform(myTransform);
+
+        pushMatrix();
+
+        translate(myTransform.origin.x, myTransform.origin.y, myTransform.origin.z);
+
+        applyMatrix(myTransform.basis.m00, myTransform.basis.m01, myTransform.basis.m02, 0,
+                myTransform.basis.m10, myTransform.basis.m11, myTransform.basis.m12, 0,
+                myTransform.basis.m20, myTransform.basis.m21, myTransform.basis.m22, 0,
+                0, 0, 0, 1);
+
+        renderable.render(this);
+
         popMatrix();
     }
 
@@ -62,10 +68,9 @@ public class BallTestApplet extends PApplet {
 
     public void keyPressed() {
         if (key == 'a') {
+            //Equations go here
 
-
-            physicsWorld.addBallAt(0f, 0f, 150f);
-//            addAircraft(0, -100, 0, random(-PI, PI));
+            physicsWorld.addBallAt(new Vector3f(0f, 0f, 6f), new Vector3f(1,20,14));
         }
 
 

@@ -1,6 +1,7 @@
 package com.stewsters;
 
 import com.bulletphysics.collision.dispatch.CollisionObject;
+import com.bulletphysics.collision.shapes.BoxShape;
 import com.bulletphysics.collision.shapes.CollisionShape;
 import com.bulletphysics.collision.shapes.SphereShape;
 import com.bulletphysics.dynamics.RigidBody;
@@ -11,29 +12,28 @@ import processing.core.PApplet;
 
 import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3f;
+import java.util.Vector;
 
-public class Ball implements PhysicsRenderable{
-    private float radius;
+public class Box implements  PhysicsRenderable{
+
+    private Vector3f size;
     private RigidBody rigidBody;
 
-    public Ball(float radius, float mass, float x, float y, float z) {
-        this.radius = radius;
+    public Box(float mass, Vector3f pos, Vector3f halfBoxExtents) {
+
+       size = halfBoxExtents;
 
 
-        CollisionShape fallShape = new SphereShape(radius);
+        CollisionShape fallShape = new BoxShape(halfBoxExtents);
         Transform myTransform = new Transform();
-        myTransform.origin.set(new Vector3f(x, y, z));
+        myTransform.origin.set(pos);
         myTransform.setRotation(new Quat4f(0, 0, 0, 1));
 
         DefaultMotionState fallMotionState = new DefaultMotionState(myTransform);
 
-
         Vector3f myFallInertia = new Vector3f(1, 1, 1);
         fallShape.calculateLocalInertia(mass, myFallInertia);
-
         RigidBodyConstructionInfo fallRigidBodyCI = new RigidBodyConstructionInfo(mass, fallMotionState, fallShape, myFallInertia);
-
-        fallRigidBodyCI.restitution = 0.6f; // bounciness
 
         rigidBody = new RigidBody(fallRigidBodyCI);
 
@@ -42,7 +42,7 @@ public class Ball implements PhysicsRenderable{
     }
 
     public void render(PApplet context) {
-        context.sphere(radius);
+        context.box(size.x * 2, size.y* 2, size.z* 2);
     }
 
     @Override
